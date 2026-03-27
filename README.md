@@ -106,14 +106,13 @@ docker compose -f docker-compose.hub.yml up -d
 ```
 
 <img width="1445" height="199" alt="image" src="https://github.com/user-attachments/assets/6c222f8c-da10-4295-b570-19c8a50d4e68" />
+<br/><br/>
 
-
-FastAPI 이미지는 Docker Hub(`juyeon09/elk-fastapi`)에서 자동으로 받아옵니다.
-
+FastAPI 이미지는 Docker Hub(`juyeon09/elk-fastapi`)에서 자동으로 받아옵니다.<br/>
 ES가 완전히 뜨는 데 약 80초 걸립니다.
 
 <img width="1442" height="255" alt="image" src="https://github.com/user-attachments/assets/e782106b-9d95-482e-9d2f-86660f931cac" /> 
-
+<br/><br/>
  
 ```bash
 # 실행 상태 확인 — 모든 서비스 healthy 이면 준비 완료
