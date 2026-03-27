@@ -50,10 +50,11 @@ FastAPI(Python 웹 서버) + Elasticsearch(검색 엔진) + Kibana(시각화 대
 | **Elasticsearch** | 데이터 색인 및 전문 검색 엔진 | Elastic 공식 이미지 |
 | **Kibana** | ES 데이터 시각화 대시보드 | Elastic 공식 이미지 |
 
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/935f2a9b-789c-41dd-a5fd-8f8d1ec59969" />
+
 > FastAPI 이미지는 멀티 스테이지 빌드로 최적화돼 있습니다 (920MB → 145MB, CVE 94% 제거). <br/>
 > 최적화 상세 내용은 [DETAILS.md](./DETAILS.md)를 참고하세요.
 
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/935f2a9b-789c-41dd-a5fd-8f8d1ec59969" />
 
 
 ---
