@@ -6,9 +6,10 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![Elasticsearch](https://img.shields.io/badge/Elasticsearch-8.13-005571?style=flat-square&logo=elasticsearch&logoColor=white)
 ![Kibana](https://img.shields.io/badge/Kibana-8.13-E8488B?style=flat-square&logo=kibana&logoColor=white)
+![Docker Hub](https://img.shields.io/badge/Docker%20Hub-juyeon%2Ffastapi--es-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
-**`docker compose up` 하나로 FastAPI + Elasticsearch + Kibana 풀 스택을 실행합니다.**
+**`docker compose up` 하나로 FastAPI + Elasticsearch + Kibana를 실행합니다.**
 
 Python, Java, Elasticsearch를 로컬에 설치할 필요 없습니다.
 
@@ -20,16 +21,18 @@ Python, Java, Elasticsearch를 로컬에 설치할 필요 없습니다.
 
 FastAPI(Python 웹 서버) + Elasticsearch(검색 엔진) + Kibana(시각화 대시보드)를 Docker로 묶어서 실행하는 풀 스택 구성입니다.
 
-- **FastAPI** — 검색 API 서버. 클라이언트 요청을 받아 ES에 쿼리를 날리고 결과를 반환합니다.
-- **Elasticsearch** — 데이터 색인 및 검색 엔진입니다.
-- **Kibana** — ES 데이터를 브라우저에서 시각화합니다.
+| 서비스 | 역할 | 이미지 |
+|--------|------|--------|
+| **FastAPI** | 검색 API 서버. 클라이언트 요청을 받아 ES에 쿼리 후 결과 반환 | `juyeon09/elk-fastapi:latest` (직접 빌드) |
+| **Elasticsearch** | 데이터 색인 및 전문 검색 엔진 | Elastic 공식 이미지 |
+| **Kibana** | ES 데이터 시각화 대시보드 | Elastic 공식 이미지 |
 
 > FastAPI 이미지는 멀티 스테이지 빌드로 최적화돼 있습니다 (920MB → 145MB, CVE 94% 제거).
 > 최적화 상세 내용은 [DETAILS.md](./DETAILS.md)를 참고하세요.
 
 ---
 
-## 사전 요구사항
+## ✅ 사전 요구사항
 
 로컬에 아래 두 가지만 설치돼 있으면 됩니다.
 
@@ -44,14 +47,7 @@ FastAPI(Python 웹 서버) + Elasticsearch(검색 엔진) + Kibana(시각화 대
 
 ## 🚀 실행 방법
 
-### 1. 저장소 클론
-
-```bash
-git clone https://github.com/username/docker-optimized-production.git
-cd docker-optimized-production
-```
-
-### 2. vm.max_map_count 설정 (처음 한 번만)
+### 1. 초기 1회 설정
 
 Elasticsearch가 요구하는 Linux 커널 설정입니다. 컨테이너가 아닌 **호스트 OS**에서 실행해야 합니다.
 
@@ -64,23 +60,73 @@ echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
 # Docker Desktop → Settings → Resources → Advanced → vm.max_map_count = 262144
 ```
 
-### 3. 전체 스택 실행
+---
 
+### 2. 전체 스택 실행
+
+ 
+#### 방법 A — Docker Hub (빌드 없이 바로 실행) ⭐ 빠른 시작
+ 
+git clone, 빌드 과정이 없습니다. `docker-compose.hub.yml` 파일 하나만 있으면 됩니다.
+ 
 ```bash
-docker compose up --build -d
+# 1. compose 파일만 받기
+curl -O https://raw.githubusercontent.com/username/docker-optimized-production/main/docker-compose.hub.yml
+ 
+# 2. 전체 스택 실행 (FastAPI 이미지는 Docker Hub에서 자동 pull)
+docker compose -f docker-compose.hub.yml up -d
+ 
+# 3. 상태 확인
+docker compose -f docker-compose.hub.yml ps
 ```
-
-처음 실행 시 이미지 다운로드와 FastAPI 빌드로 수 분이 걸릴 수 있습니다.
-ES가 완전히 뜨는 데 약 40초 걸립니다.
-
-### 4. 실행 상태 확인
-
+ 
+최신 버전으로 업데이트할 때:
+ 
 ```bash
+docker pull juyeon09/elk-fastapi:latest
+docker compose -f docker-compose.hub.yml up -d
+```
+ 
+---
+ 
+#### 방법 B — GitHub Clone (소스 코드 포함, 직접 빌드)
+ 
+코드를 직접 보고 수정하면서 사용할 때.
+ 
+```bash
+# 1. 저장소 클론
+git clone https://github.com/username/docker-optimized-production.git
+cd docker-optimized-production
+ 
+# 2. 전체 스택 빌드 & 실행
+docker compose up --build -d
+ 
+# 3. 상태 확인
 docker compose ps
 ```
-
-모든 서비스가 `healthy` 상태이면 준비 완료입니다.
-
+ 
+---
+ 
+### 실행 후 동작 확인 (공통)
+ 
+모든 서비스가 `healthy` 상태가 되면 준비 완료입니다. ES가 뜨는 데 약 40초 걸립니다.
+ 
+```bash
+# API 상태 확인
+curl http://localhost:8000/health
+ 
+# 데이터 색인
+curl -X POST http://localhost:8000/items \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Docker 최적화", "description": "멀티 스테이지 빌드 가이드", "tag": "devops"}'
+ 
+# 검색
+curl "http://localhost:8000/items/search?q=Docker"
+ 
+# ES 클러스터 상태
+curl http://localhost:9200/_cluster/health?pretty
+```
+ 
 ---
 
 ## 🌐 서비스 포트
@@ -94,33 +140,10 @@ docker compose ps
 
 ---
 
-## 🧪 동작 확인
-
-```bash
-# API 상태 확인
-curl http://localhost:8000/health
-
-# 데이터 색인
-curl -X POST http://localhost:8000/items \
-  -H "Content-Type: application/json" \
-  -d '{"title": "Docker 최적화", "description": "멀티 스테이지 빌드 가이드", "tag": "devops"}'
-
-# 검색
-curl "http://localhost:8000/items/search?q=Docker"
-
-# ES 클러스터 상태
-curl http://localhost:9200/_cluster/health?pretty
-
-# Kibana 브라우저 접속
-open http://localhost:5601
-```
-
----
-
 ## 🛑 종료 방법
 
 ```bash
-# 컨테이너만 종료 (데이터 유지)
+# 컨테이너만 종료 (Elasticsearch 데이터 유지)
 docker compose down
 
 # 컨테이너 + 데이터까지 완전 삭제
@@ -134,13 +157,13 @@ docker compose down -v
 
 ## 💻 RAM별 권장 설정
 
-ES는 기본적으로 512MB 힙을 사용합니다. 로컬 RAM이 부족하면 `docker-compose.yml`에서 아래 값을 조정하세요.
+ES는 기본 512MB JVM 힙을 사용합니다. 로컬 RAM이 부족하면 `docker-compose.yml` 또는 `docker-compose.hub.yml`의 아래 값을 조정하세요.
 
-| 로컬 RAM | 권장 설정 |
-|---------|----------|
-| 16GB 이상 | `ES_JAVA_OPTS=-Xms512m -Xmx512m` (기본값) |
-| 8GB | `ES_JAVA_OPTS=-Xms256m -Xmx256m` |
-| 8GB 이하 | ES 실행이 불안정할 수 있습니다 |
+| 로컬 RAM | 권장 ES 설정 | 비고 |
+|---------|------------|------|
+| 16GB 이상 | `-Xms512m -Xmx512m` (기본값) | 쾌적 |
+| 8GB | `-Xms256m -Xmx256m` | 다른 앱 종료 권장 |
+| 8GB 이하 | ES 실행이 불안정할 수 있음 | PostgreSQL 대체 고려 |
 
 ---
 
@@ -172,27 +195,32 @@ sudo sysctl -w vm.max_map_count=262144
 # 로그 확인
 docker logs es01 --tail=50
 ```
-
+ 
 **포트가 이미 사용 중일 때**
-
-`docker-compose.yml`에서 포트 앞부분을 변경하세요.
+ 
+`docker-compose.yml` 또는 `docker-compose.hub.yml`에서 호스트 포트(앞 숫자)만 변경하세요.
 ```yaml
 ports:
-  - "9201:9200"   # 9200이 막혀있으면 9201로 변경
+  - "9201:9200"   # 9200 사용 중이면 9201로 변경
 ```
-
+ 
 **RAM 부족으로 ES가 죽을 때**
-
-`docker-compose.yml`에서 JVM 힙을 낮추세요.
 ```yaml
+# ES_JAVA_OPTS 값 낮추기
 ES_JAVA_OPTS=-Xms256m -Xmx256m
 ```
+ 
+**클러스터 상태가 red일 때**
+```bash
+curl http://localhost:9200/_cluster/allocation/explain?pretty
+```
+ 
 
 ---
 
 ## 📖 상세 문서
 
-Docker 최적화 전략, 멀티 스테이지 빌드 설계 원칙, 이미지 vs 컨테이너 개념, 베이스 이미지 선택 기준, Docker Hub 배포 방법 등 기술 상세 내용은 아래 문서를 참고하세요.
+Docker 최적화 전략, 멀티 스테이지 빌드 설계 원칙, 이미지 vs 컨테이너 개념, 베이스 이미지 slim vs alpine 선택 기준, ES JVM 튜닝 전략, Docker Hub 배포 방법 등 기술 상세 내용은 아래 문서를 참고하세요.
 
 → **[DETAILS.md](./DETAILS.md)** — Docker 최적화 전략 전체 가이드
 
