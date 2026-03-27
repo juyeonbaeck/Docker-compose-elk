@@ -11,124 +11,93 @@
 
 **`docker compose up` 하나로 FastAPI + Elasticsearch + Kibana를 실행합니다.**
 
-Python, Java, Elasticsearch를 로컬에 설치할 필요 없습니다.
+git clone 없이, Python/Java 설치 없이, Docker만 있으면 됩니다.
 
 </div>
 
 ---
 
+## 📋 목차
+ 
+- [프로젝트 설명](#-프로젝트-설명)
+- [사전 요구사항](#-사전-요구사항)
+- [빠른 시작 3단계](#-빠른-시작-3단계) ← 여기만 봐도 실행 가능
+- [서비스 포트](#-서비스-포트)
+- [동작 확인](#-동작-확인)
+- [종료 방법](#-종료-방법)
+- [GitHub에서 직접 빌드하기](#-github에서-직접-빌드하기)
+- [RAM별 권장 설정](#-ram별-권장-설정)
+- [파일 구조](#-파일-구조)
+- [트러블슈팅](#-트러블슈팅)
+- [상세 문서](#-상세-문서)
+
+---
+
 ## 📦 프로젝트 설명
 
-FastAPI(Python 웹 서버) + Elasticsearch(검색 엔진) + Kibana(시각화 대시보드)를 Docker로 묶어서 실행하는 풀 스택 구성입니다.
+FastAPI(Python 웹 서버) + Elasticsearch(검색 엔진) + Kibana(시각화 대시보드)를 Docker로 묶은 풀 스택 검색 API 환경입니다.
 
-| 서비스 | 역할 | 이미지 |
-|--------|------|--------|
-| **FastAPI** | 검색 API 서버. 클라이언트 요청을 받아 ES에 쿼리 후 결과 반환 | `juyeon09/elk-fastapi:latest` (직접 빌드) |
+| 서비스 | 역할 | 이미지 출처 |
+|--------|------|------------|
+| **FastAPI** | 검색 API 서버. 클라이언트 요청 → ES 쿼리 → 결과 반환 | Docker Hub (`juyeon09/elk-fastapi`) |
 | **Elasticsearch** | 데이터 색인 및 전문 검색 엔진 | Elastic 공식 이미지 |
 | **Kibana** | ES 데이터 시각화 대시보드 | Elastic 공식 이미지 |
 
-> FastAPI 이미지는 멀티 스테이지 빌드로 최적화돼 있습니다 (920MB → 145MB, CVE 94% 제거).
+> FastAPI 이미지는 멀티 스테이지 빌드로 최적화돼 있습니다 (920MB → 145MB, CVE 94% 제거). <br/>
 > 최적화 상세 내용은 [DETAILS.md](./DETAILS.md)를 참고하세요.
 
 ---
 
 ## ✅ 사전 요구사항
 
-로컬에 아래 두 가지만 설치돼 있으면 됩니다.
-
 | 항목 | 버전 | 확인 방법 |
 |------|------|----------|
 | Docker Engine | 24.0 이상 | `docker --version` |
 | Docker Compose V2 | 2.0 이상 | `docker compose version` |
 
-> Python, Java, Elasticsearch를 따로 설치할 필요 없습니다. 전부 컨테이너 안에 들어있습니다.
+> Python, Java, Elasticsearch 별도 설치 불필요. 전부 컨테이너 안에 들어있습니다.
 
 ---
 
-## 🚀 실행 방법
-
-### 1. 초기 1회 설정
-
-Elasticsearch가 요구하는 Linux 커널 설정입니다. 컨테이너가 아닌 **호스트 OS**에서 실행해야 합니다.
-
+## ⚡ 빠른 시작 3단계
+ 
+> **이 섹션만 따라하면 전체 스택이 실행됩니다.**
+ 
+### Step 1 — vm.max_map_count 설정 (처음 한 번만)
+ 
+ES가 요구하는 커널 설정입니다. 컨테이너 밖 호스트 OS에서 실행하세요.
+ 
 ```bash
-# Linux
+# Linux / Ubuntu (VM 포함)
 sudo sysctl -w vm.max_map_count=262144
 echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
-
+ 
 # macOS (Docker Desktop)
 # Docker Desktop → Settings → Resources → Advanced → vm.max_map_count = 262144
 ```
-
----
-
-### 2. 전체 스택 실행
-
  
-#### 방법 A — Docker Hub (빌드 없이 바로 실행) ⭐ 빠른 시작
- 
-git clone, 빌드 과정이 없습니다. `docker-compose.hub.yml` 파일 하나만 있으면 됩니다.
+### Step 2 — compose 파일 받기
  
 ```bash
-# 1. compose 파일만 받기
 curl -O https://raw.githubusercontent.com/username/docker-optimized-production/main/docker-compose.hub.yml
+```
  
-# 2. 전체 스택 실행 (FastAPI 이미지는 Docker Hub에서 자동 pull)
+### Step 3 — 전체 스택 실행
+ 
+```bash
 docker compose -f docker-compose.hub.yml up -d
+```
  
-# 3. 상태 확인
+FastAPI 이미지는 Docker Hub(`juyeon09/elk-fastapi`)에서 자동으로 받아옵니다.
+ES가 완전히 뜨는 데 약 40초 걸립니다.
+ 
+```bash
+# 실행 상태 확인 — 모든 서비스 healthy 이면 준비 완료
 docker compose -f docker-compose.hub.yml ps
 ```
  
-최신 버전으로 업데이트할 때:
- 
-```bash
-docker pull juyeon09/elk-fastapi:latest
-docker compose -f docker-compose.hub.yml up -d
-```
- 
 ---
  
-#### 방법 B — GitHub Clone (소스 코드 포함, 직접 빌드)
- 
-코드를 직접 보고 수정하면서 사용할 때.
- 
-```bash
-# 1. 저장소 클론
-git clone https://github.com/username/docker-optimized-production.git
-cd docker-optimized-production
- 
-# 2. 전체 스택 빌드 & 실행
-docker compose up --build -d
- 
-# 3. 상태 확인
-docker compose ps
-```
- 
----
- 
-### 실행 후 동작 확인 (공통)
- 
-모든 서비스가 `healthy` 상태가 되면 준비 완료입니다. ES가 뜨는 데 약 40초 걸립니다.
- 
-```bash
-# API 상태 확인
-curl http://localhost:8000/health
- 
-# 데이터 색인
-curl -X POST http://localhost:8000/items \
-  -H "Content-Type: application/json" \
-  -d '{"title": "Docker 최적화", "description": "멀티 스테이지 빌드 가이드", "tag": "devops"}'
- 
-# 검색
-curl "http://localhost:8000/items/search?q=Docker"
- 
-# ES 클러스터 상태
-curl http://localhost:9200/_cluster/health?pretty
-```
- 
----
-
 ## 🌐 서비스 포트
 
 | 서비스 | 주소 | 용도 |
@@ -138,6 +107,30 @@ curl http://localhost:9200/_cluster/health?pretty
 | Elasticsearch | http://localhost:9200 | ES HTTP API |
 | Kibana | http://localhost:5601 | 데이터 시각화 대시보드 |
 
+---
+
+## 🧪 동작 확인
+ 
+```bash
+# 1. API 상태 확인
+curl http://localhost:8000/health
+# → {"api": "ok", "es_status": "green"}
+ 
+# 2. 데이터 색인
+curl -X POST http://localhost:8000/items \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Docker 최적화", "description": "멀티 스테이지 빌드 가이드", "tag": "devops"}'
+ 
+# 3. 검색
+curl "http://localhost:8000/items/search?q=Docker"
+ 
+# 4. ES 클러스터 상태
+curl http://localhost:9200/_cluster/health?pretty
+ 
+# 5. Kibana 대시보드
+open http://localhost:5601
+```
+ 
 ---
 
 ## 🛑 종료 방법
@@ -155,15 +148,39 @@ docker compose down -v
 
 ---
 
+ 
+## 🔄 최신 버전 업데이트
+ 
+```bash
+docker pull juyeon09/elk-fastapi:latest
+docker compose -f docker-compose.hub.yml up -d
+```
+ 
+---
+
+ 
+## 🛠 GitHub에서 직접 빌드하기
+ 
+소스 코드를 직접 보거나 수정하고 싶을 때 사용합니다.
+ 
+```bash
+git clone https://github.com/username/docker-optimized-production.git
+cd docker-optimized-production
+docker compose up --build -d
+```
+ 
+---
+
+
 ## 💻 RAM별 권장 설정
 
-ES는 기본 512MB JVM 힙을 사용합니다. 로컬 RAM이 부족하면 `docker-compose.yml` 또는 `docker-compose.hub.yml`의 아래 값을 조정하세요.
-
+ES는 기본 512MB JVM 힙을 사용합니다. 로컬 RAM이 부족하면 `docker-compose.hub.yml`에서 아래 값을 조정하세요.
+ 
 | 로컬 RAM | 권장 ES 설정 | 비고 |
 |---------|------------|------|
 | 16GB 이상 | `-Xms512m -Xmx512m` (기본값) | 쾌적 |
 | 8GB | `-Xms256m -Xmx256m` | 다른 앱 종료 권장 |
-| 8GB 이하 | ES 실행이 불안정할 수 있음 | PostgreSQL 대체 고려 |
+| 8GB 이하 | ES 실행 불안정 가능 | — |
 
 ---
 
@@ -171,17 +188,18 @@ ES는 기본 512MB JVM 힙을 사용합니다. 로컬 RAM이 부족하면 `docke
 
 ```
 .
+├── docker-compose.hub.yml      # ← 팀원 배포용 (이것만 있으면 실행 가능)
+├── docker-compose.yml          # 소스 직접 빌드용
 ├── Dockerfile                  # FastAPI 멀티 스테이지 빌드
-├── docker-compose.yml          # 풀 스택 오케스트레이션
-├── docker-compose.hub.yml      # Docker Hub 이미지 사용 버전 (빌드 없음)
 ├── .dockerignore
 ├── .env.example                # 환경변수 템플릿
-├── requirements.txt            # Python 패키지 목록
+├── requirements.txt
 ├── app/
-│   └── main.py                 # FastAPI 앱
+│   └── main.py
 └── elasticsearch/
-    └── elasticsearch.yml       # ES 커스텀 설정
+    └── elasticsearch.yml
 ```
+ 
 
 ---
 
@@ -220,7 +238,7 @@ curl http://localhost:9200/_cluster/allocation/explain?pretty
 
 ## 📖 상세 문서
 
-Docker 최적화 전략, 멀티 스테이지 빌드 설계 원칙, 이미지 vs 컨테이너 개념, 베이스 이미지 slim vs alpine 선택 기준, ES JVM 튜닝 전략, Docker Hub 배포 방법 등 기술 상세 내용은 아래 문서를 참고하세요.
+멀티 스테이지 빌드 원리, 이미지 빌드 & Docker Hub 배포 방법, slim vs alpine 선택 기준, ES JVM 튜닝 전략, docker run vs compose 차이 등 기술 상세 내용은 아래를 참고하세요.
 
 → **[DETAILS.md](./DETAILS.md)** — Docker 최적화 전략 전체 가이드
 
