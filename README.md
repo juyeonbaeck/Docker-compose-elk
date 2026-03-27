@@ -118,7 +118,10 @@ ES가 완전히 뜨는 데 약 80초 걸립니다.
 # 실행 상태 확인 — 모든 서비스 healthy 이면 준비 완료
 docker compose -f docker-compose.hub.yml ps
 ```
- 
+
+<img width="1685" height="130" alt="image" src="https://github.com/user-attachments/assets/42ac620e-6874-4fa1-bf40-4c90f2de48a0" />
+
+
 ---
  
 ## 🌐 서비스 포트
