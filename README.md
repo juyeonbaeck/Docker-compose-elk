@@ -1,4 +1,4 @@
-# 🐳 FastAPI + Elasticsearch + Kibana — Docker 풀 스택
+# 🐳 ELK 기반 검색 API 환경 — Docker 즉시 배포 가이드
 
 <div align="center">
 
