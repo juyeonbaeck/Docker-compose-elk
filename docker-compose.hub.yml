@@ -63,6 +63,7 @@ services:
     # build: 없음 — Docker Hub에서 이미지를 직접 받아서 실행
     image: juyeon09/elk-fastapi:latest
     container_name: fastapi01
+    command: ["main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
     environment:
       - ES_HOST=http://elasticsearch:9200
       - APP_ENV=development
