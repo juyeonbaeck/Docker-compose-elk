@@ -119,7 +119,8 @@ ES가 완전히 뜨는 데 약 80초 걸립니다.
 docker compose -f docker-compose.hub.yml ps
 ```
 
-<img width="1685" height="130" alt="image" src="https://github.com/user-attachments/assets/42ac620e-6874-4fa1-bf40-4c90f2de48a0" />
+<img width="1685" height="130" alt="image" src="https://github.com/user-attachments/assets/42ac620e-6874-4fa1-bf40-4c90f2de48a0" /><br/>
+<img width="1692" height="114" alt="image" src="https://github.com/user-attachments/assets/657813c3-e1b9-464b-a06f-63cf3d22b610" />
 
 
 ---
