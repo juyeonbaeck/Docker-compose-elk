@@ -24,7 +24,7 @@ git clone 없이, Python/Java 설치 없이, Docker만 있으면 됩니다.
 [요구사항](#-요구사항) · [빠른 시작 3단계](#-빠른-시작-3단계)  $${\color{hotpink} ← 여기만 봐도 실행 가능⭐}$$
 
 🌐 서비스 정보 — 
-[서비스 포트](#-서비스-포트) · [동작 확인](#-동작-확인)
+[서비스 포트](#-서비스-포트) · [접속 성공 화면](#-접속-성공-화면) · [동작 확인](#-동작-확인)
 
 ⚙️ 설정 ———— 
 [RAM별 권장 설정](#-ram별-권장-설정) · [환경변수](#-환경변수)
@@ -36,7 +36,7 @@ git clone 없이, Python/Java 설치 없이, Docker만 있으면 됩니다.
 [소스 빌드](#-소스-빌드) · [파일 구조](#-파일-구조)
 
 📖 기타 ———— 
-[상세 문서](#-상세-문서) · [기여](#-기여) · [라이선스](#-라이선스)
+[상세 문서](#-상세-문서) · [활용 가이드](#-활용-가이드) · [기여](#-기여) · [라이선스](#-라이선스)
 
 ---
 
@@ -134,6 +134,32 @@ docker compose -f docker-compose.hub.yml ps
 | Elasticsearch | http://localhost:9200 | ES HTTP API |
 | Kibana | http://localhost:5601 | 데이터 시각화 대시보드 |
 
+---
+
+## 🖥️ 접속 성공 화면
+ 
+모든 서비스가 `healthy` 상태가 되면 브라우저에서 아래 화면을 확인할 수 있습니다.
+ 
+> 💡 로컬 VM 환경이라면 브라우저 접속 전에 **포트포워딩 설정**이 필요합니다. → [USAGE.md — 포트포워딩 가이드](./USAGE.md#-포트포워딩-설정-vm-환경)
+ 
+<br/>
+ 
+| FastAPI Swagger UI (`localhost:8000/docs`) | Elasticsearch (`localhost:9200`) | Kibana (`localhost:5601`) |
+|:------------------------------------------:|:--------------------------------:|:-------------------------:|
+|  <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/100579d8-e640-4806-866f-a69783dc4f66" /> | <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/bccc7ac0-088c-4bce-98f1-5d149f5422ca" /> | <img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/a4daee82-2623-4773-b5f8-df1e62003930" /> |
+| API 엔드포인트 목록 및 테스트 UI | 클러스터 상태 및 인덱스 조회 | 데이터 시각화 대시보드 |
+ 
+<br/>
+ 
+```bash
+# 터미널에서 한 번에 상태 확인
+curl http://localhost:8000/health      # → {"api":"ok","es_status":"green"}
+curl http://localhost:9200/_cluster/health?pretty   # → "status" : "green"
+curl http://localhost:5601/api/status | python3 -m json.tool | grep level
+```
+ 
+> 다음 단계로 → **[USAGE.md](./USAGE.md)** — API 사용법 · 데이터 색인/검색 · Kibana 대시보드 설정
+ 
 ---
 
 ## 🧪 동작 확인
@@ -276,6 +302,15 @@ docker compose up --build -d
 멀티 스테이지 빌드 원리, 이미지 빌드 & Docker Hub 배포 방법, slim vs alpine 선택 기준, ES JVM 튜닝 전략, docker run vs compose 차이 등 기술 상세 내용은 아래를 참고하세요.
 
 → **[DETAILS.md](./DETAILS.md)** — Docker 최적화 전략 전체 가이드
+
+---
+
+ 
+## 🚀 활용 가이드
+ 
+스택 실행 이후 실제로 활용하는 방법을 담은 가이드입니다.
+ 
+→ **[USAGE.md](./USAGE.md)** — 포트포워딩 설정 · API 사용법 · 데이터 색인/검색 실습 · Kibana 대시보드 설정
 
 ---
 
