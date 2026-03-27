@@ -108,7 +108,12 @@ python:3.12-alpine  완전히 다른 OS (Alpine, musl libc)      ···   50MB  
 | 이미지 크기 | 130MB | 50MB |
  
 > PyPI 패키지 대부분이 glibc 기반 `.whl`로 배포됩니다. alpine은 musl libc라 호환성 문제가 생기므로, 이 프로젝트는 **안전성 우선으로 slim을 유지**합니다.
- 
+
+> [!IMPORTANT]
+> **glibc** — GNU C Library. Linux 표준 C 라이브러리 (Debian/Ubuntu 기본)<br/>
+> **.whl** — 미리 컴파일된 Python 패키지 포맷. pip install 시 빌드 과정 없음<br/>
+> **musl libc** — Alpine Linux의 경량 C 라이브러리. glibc 기반 .whl과 호환 안 됨
+
 ---
  
 ## 🏗️ 멀티 스테이지 빌드
@@ -125,16 +130,16 @@ python:3.12-alpine  완전히 다른 OS (Alpine, musl libc)      ···   50MB  
 └──────────────────────────────────┘
  
 ✅ 멀티 스테이지 빌드
-┌─────────────────────┐       ┌──────────────────────────┐
-│  STAGE 1: deps      │       │  STAGE 2: runtime        │
-│  python:3.12-slim   │       │  python:3.12-slim        │
-│  ├── gcc (컴파일러) │/install│  ├── /install (패키지만)│
-│  ├── pip (설치 도구)│─only─▶│  ├── main.py            │
-│  └── /install       │        │  ├── ❌ gcc            │
-│                     │        │  └── ❌ pip            │
-│  ※ 최종 이미지에    │       │  → 145MB, CVE 2건       │
-│    포함되지 않음     │       │  → 공격 표면 최소화      │
-└─────────────────────┘       └──────────────────────────┘
+┌─────────────────────┐            ┌──────────────────────────┐
+│  STAGE 1: deps      │            │  STAGE 2: runtime        │
+│  python:3.12-slim   │            │  python:3.12-slim        │
+│  ├── gcc (컴파일러) │  /install  │   ├── /install (패키지만) │
+│  ├── pip (설치 도구)│ ───only───▶│  ├── main.py            │
+│  └── /install       │             │  ├── ❌ gcc            │
+│                     │             │  └── ❌ pip            │
+│  ※ 최종 이미지에    │            │  → 145MB, CVE 2건       │
+│    포함되지 않음     │            │  → 공격 표면 최소화      │
+└─────────────────────┘            └──────────────────────────┘
 ```
  
 > 💡 빌드 도구(`gcc`, `pip`, `musl-dev`)를 최종 이미지에서 제거함으로써 **공격 표면(Attack Surface)을 줄이고**, 잠재적 취약점을 가진 패키지가 프로덕션 컨테이너에 포함되지 않도록 합니다. 이는 금융권 보안 요구사항에서 특히 중요한 원칙입니다.
