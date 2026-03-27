@@ -506,9 +506,9 @@ curl http://localhost:8000/health   # {"api":"ok","es_status":"green"}
  
 | RAM | ES_JAVA_OPTS | 비고 |
 |-----|:------------:|------|
-| 16GB 이상 | `-Xms512m -Xmx512m` | 기본값, 쾌적 |
+| 16GB 이상 | `-Xms512m -Xmx512m` (기본값) | 쾌적 |
 | 8GB | `-Xms256m -Xmx256m` | 다른 앱 종료 권장 |
-| 4GB 이하 | `-Xms128m -Xmx128m` | ES 불안정 가능 |
+| 4GB 이하 | `-Xms128m -Xmx128m` | ES 불안정 |
  
 ---
  
