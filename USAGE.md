@@ -38,6 +38,9 @@ Docker 컨테이너:8000
 
 > VM 재시작 없이 바로 적용됩니다.
 
+<img width="837" height="286" alt="image" src="https://github.com/user-attachments/assets/2949cfd8-5f65-4cff-8ced-30a27974023c" />
+
+
 ### VM IP 확인 방법
 
 ```bash
