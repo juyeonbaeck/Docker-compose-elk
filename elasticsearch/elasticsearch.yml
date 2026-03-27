@@ -1,0 +1,11 @@
+cluster.name: docker-cluster
+node.name: es01-node
+
+network.host: 0.0.0.0
+
+# 단일 노드 최적화 — 샤드 1개, 레플리카 0
+index.number_of_shards: 1
+index.number_of_replicas: 0
+
+# 불필요한 로그 최소화
+logger.level: WARN
