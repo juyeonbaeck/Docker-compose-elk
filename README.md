@@ -1,4 +1,4 @@
-# 🐳 ELK 기반 검색 API 환경 — Docker 즉시 배포 가이드
+# 🐳 ELK 기반 검색 API 환경 — Docker Hub에서 바로 실행하기
 
 <div align="center">
 
