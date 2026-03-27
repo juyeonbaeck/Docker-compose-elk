@@ -86,21 +86,34 @@ echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
 # macOS (Docker Desktop)
 # Docker Desktop → Settings → Resources → Advanced → vm.max_map_count = 262144
 ```
+
+<img width="831" height="233" alt="image" src="https://github.com/user-attachments/assets/4f95fa03-5fcd-466a-9524-39dcbed635a8" />
+
  
 ### Step 2 — compose 파일 받기
  
 ```bash
 curl -O https://raw.githubusercontent.com/juyeonbaeck/Docker-compose-elk/main/docker-compose.hub.yml
 ```
+
+<img width="1216" height="123" alt="image" src="https://github.com/user-attachments/assets/7f03d8c6-77cc-4443-94f9-a0f8d71833e3" />
+
  
 ### Step 3 — 전체 스택 실행
  
 ```bash
 docker compose -f docker-compose.hub.yml up -d
 ```
- 
+
+<img width="1445" height="199" alt="image" src="https://github.com/user-attachments/assets/6c222f8c-da10-4295-b570-19c8a50d4e68" />
+
+
 FastAPI 이미지는 Docker Hub(`juyeon09/elk-fastapi`)에서 자동으로 받아옵니다.
-ES가 완전히 뜨는 데 약 40초 걸립니다.
+
+ES가 완전히 뜨는 데 약 80초 걸립니다.
+
+<img width="1442" height="255" alt="image" src="https://github.com/user-attachments/assets/e782106b-9d95-482e-9d2f-86660f931cac" /> 
+
  
 ```bash
 # 실행 상태 확인 — 모든 서비스 healthy 이면 준비 완료
