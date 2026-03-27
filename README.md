@@ -18,22 +18,29 @@ git clone 없이, Python/Java 설치 없이, Docker만 있으면 됩니다.
 ---
 
 ## 📋 목차
+ [프로젝트 개요](#-프로젝트-개요)
  
-- [프로젝트 설명](#-프로젝트-설명)
-- [사전 요구사항](#-사전-요구사항)
-- [빠른 시작 3단계](#-빠른-시작-3단계) ← 여기만 봐도 실행 가능
-- [서비스 포트](#-서비스-포트)
-- [동작 확인](#-동작-확인)
-- [종료 방법](#-종료-방법)
-- [GitHub에서 직접 빌드하기](#-github에서-직접-빌드하기)
-- [RAM별 권장 설정](#-ram별-권장-설정)
-- [파일 구조](#-파일-구조)
-- [트러블슈팅](#-트러블슈팅)
-- [상세 문서](#-상세-문서)
+🚀 시작하기 —— 
+[요구사항](#-요구사항) · [빠른 시작 3단계](#-빠른-시작-3단계) ← 여기만 봐도 실행 가능
+
+🌐 서비스 정보 — 
+[서비스 포트](#-서비스-포트) · [동작 확인](#-동작-확인)
+
+⚙️ 설정 ———— 
+[RAM별 권장 설정](#-ram별-권장-설정) · 
+
+🛠️ 운영 ———— 
+[종료 방법](#-종료-방법) · [최신 버전 업데이트](#-최신-버전-업데이트) · [트러블슈팅](#-트러블슈팅)
+
+👩‍💻 개발자용 —— 
+[소스 빌드](#-소스-빌드) · [파일 구조](#-파일-구조)
+
+📖 기타 ———— 
+[상세 문서](#-상세-문서)
 
 ---
 
-## 📦 프로젝트 설명
+## 📦 프로젝트 개요
 
 FastAPI(Python 웹 서버) + Elasticsearch(검색 엔진) + Kibana(시각화 대시보드)를 Docker로 묶은 풀 스택 검색 API 환경입니다.
 
@@ -48,7 +55,7 @@ FastAPI(Python 웹 서버) + Elasticsearch(검색 엔진) + Kibana(시각화 대
 
 ---
 
-## ✅ 사전 요구사항
+## ✅ 요구사항
 
 | 항목 | 버전 | 확인 방법 |
 |------|------|----------|
@@ -155,51 +162,6 @@ docker compose down -v
 docker pull juyeon09/elk-fastapi:latest
 docker compose -f docker-compose.hub.yml up -d
 ```
- 
----
-
- 
-## 🛠 GitHub에서 직접 빌드하기
- 
-소스 코드를 직접 보거나 수정하고 싶을 때 사용합니다.
- 
-```bash
-git clone https://github.com/juyeonbaeck/Docker-compose-elk.git
-cd docker-optimized-production
-docker compose up --build -d
-```
- 
----
-
-
-## 💻 RAM별 권장 설정
-
-ES는 기본 512MB JVM 힙을 사용합니다. 로컬 RAM이 부족하면 `docker-compose.hub.yml`에서 아래 값을 조정하세요.
- 
-| 로컬 RAM | 권장 ES 설정 | 비고 |
-|---------|------------|------|
-| 16GB 이상 | `-Xms512m -Xmx512m` (기본값) | 쾌적 |
-| 8GB | `-Xms256m -Xmx256m` | 다른 앱 종료 권장 |
-| 8GB 이하 | ES 실행 불안정 가능 | — |
-
----
-
-## 📁 파일 구조
-
-```
-.
-├── docker-compose.hub.yml      # ← 팀원 배포용 (이것만 있으면 실행 가능)
-├── docker-compose.yml          # 소스 직접 빌드용
-├── Dockerfile                  # FastAPI 멀티 스테이지 빌드
-├── .dockerignore
-├── .env.example                # 환경변수 템플릿
-├── requirements.txt
-├── app/
-│   └── main.py
-└── elasticsearch/
-    └── elasticsearch.yml
-```
- 
 
 ---
 
@@ -231,6 +193,48 @@ ES_JAVA_OPTS=-Xms256m -Xmx256m
 **클러스터 상태가 red일 때**
 ```bash
 curl http://localhost:9200/_cluster/allocation/explain?pretty
+```
+ 
+---
+
+## 💻 RAM별 권장 설정
+
+ES는 기본 512MB JVM 힙을 사용합니다. 로컬 RAM이 부족하면 `docker-compose.hub.yml`에서 아래 값을 조정하세요.
+ 
+| 로컬 RAM | 권장 ES 설정 | 비고 |
+|---------|------------|------|
+| 16GB 이상 | `-Xms512m -Xmx512m` (기본값) | 쾌적 |
+| 8GB | `-Xms256m -Xmx256m` | 다른 앱 종료 권장 |
+| 8GB 이하 | ES 실행 불안정 가능 | — |
+
+---
+
+## 🛠 소스 빌드
+ 
+소스 코드를 직접 보거나 수정하고 싶을 때 사용합니다.
+ 
+```bash
+git clone https://github.com/juyeonbaeck/Docker-compose-elk.git
+cd docker-optimized-production
+docker compose up --build -d
+```
+ 
+---
+
+## 📁 파일 구조
+
+```
+.
+├── docker-compose.hub.yml      # ← 팀원 배포용 (이것만 있으면 실행 가능)
+├── docker-compose.yml          # 소스 직접 빌드용
+├── Dockerfile                  # FastAPI 멀티 스테이지 빌드
+├── .dockerignore
+├── .env.example                # 환경변수 템플릿
+├── requirements.txt
+├── app/
+│   └── main.py
+└── elasticsearch/
+    └── elasticsearch.yml
 ```
  
 
