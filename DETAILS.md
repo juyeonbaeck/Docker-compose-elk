@@ -242,9 +242,8 @@ CVE 32건                    →    CVE 2건 (Low only)
  
 ## ⚙️ Elasticsearch & Kibana 튜닝
  
-ES/Kibana는 Elastic사 완성 이미지라 Dockerfile 수정이 불가합니다. **환경변수와 설정 파일 마운트**로만 최적화합니다.
- 
-> "무엇을 최적화할 수 있고, 무엇은 할 수 없는지를 구분하는 것이 시니어 엔지니어의 판단입니다."
+ES/Kibana는 Elastic사에서 배포한 완성 이미지라 Dockerfile 수정이 불가합니다. **환경변수와 설정 파일 마운트**로만 최적화합니다.
+
  
 ### JVM 힙 계산법 (Elasticsearch)
  
@@ -406,13 +405,13 @@ INFO: 2025-01-01 POST /items 201 12ms
  
 ## ⭐ 설계 원칙
  
-### 1. 멀티 스테이지 빌드 — "공사장비는 완성된 집에 들어오지 않는다"
+### 1. 멀티 스테이지 빌드
  
 - ✅ gcc, pip 등 빌드 도구는 Stage 1에서만 사용
 - ✅ Stage 2는 `/install` 결과물만 `COPY --from=`으로 가져옴
 - ✅ 빌드 도구 제거 → 이미지 경량화 + **공격 표면(Attack Surface) 감소**
  
-### 2. 최소 권한 원칙 (Principle of Least Privilege)
+### 2. 최소 권한 원칙
  
 - ✅ `appuser` Non-root 실행
 - ✅ `COPY --chown` 파일 소유권 제한
@@ -425,7 +424,7 @@ INFO: 2025-01-01 POST /items 201 12ms
 - ✅ 환경변수 + 설정 파일 마운트로만 최적화
 - ✅ 비공식 경량화 금지 → 운영 장애 시 Elastic 지원 유지
  
-### 4. 컨테이너 격리 — "하나가 죽어도 나머지는 산다"
+### 4. 컨테이너 격리
  
 - ✅ 서비스별 `deploy.resources.limits` 설정
 - ✅ `healthcheck` + `depends_on: condition: service_healthy`
