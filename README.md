@@ -79,7 +79,7 @@ echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
 ### Step 2 — compose 파일 받기
  
 ```bash
-curl -O https://raw.githubusercontent.com/username/docker-optimized-production/main/docker-compose.hub.yml
+curl -O [https://raw.githubusercontent.com/username/docker-optimized-production/main/docker-compose.hub.yml](https://raw.githubusercontent.com/juyeonbaeck/Docker-compose-elk/main/docker-compose.hub.yml)
 ```
  
 ### Step 3 — 전체 스택 실행
@@ -164,7 +164,7 @@ docker compose -f docker-compose.hub.yml up -d
 소스 코드를 직접 보거나 수정하고 싶을 때 사용합니다.
  
 ```bash
-git clone https://github.com/username/docker-optimized-production.git
+git clone https://github.com/juyeonbaeck/Docker-compose-elk.git
 cd docker-optimized-production
 docker compose up --build -d
 ```
@@ -252,4 +252,4 @@ curl http://localhost:9200/_cluster/allocation/explain?pretty
 
 ## 📜 라이선스
 
-MIT License © 2025 [백주연 (Juyeon Baeck)](https://github.com/username)
+MIT License © 2025 [백주연 (Juyeon Baeck)](https://github.com/juyeonbaeck)
