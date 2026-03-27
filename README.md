@@ -86,7 +86,7 @@ echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
 ### Step 2 — compose 파일 받기
  
 ```bash
-curl -O [https://raw.githubusercontent.com/username/docker-optimized-production/main/docker-compose.hub.yml](https://raw.githubusercontent.com/juyeonbaeck/Docker-compose-elk/main/docker-compose.hub.yml)
+curl -O https://raw.githubusercontent.com/juyeonbaeck/Docker-compose-elk/main/docker-compose.hub.yml
 ```
  
 ### Step 3 — 전체 스택 실행
